@@ -51,19 +51,19 @@ helpers do
 
   def win!(msg)
     @once_again = true
-    @show_player_action_button = true
+    @show_player_action_button = false
     @success = "<strong>You win!</strong> #{msg}"
   end
 
   def lose!(msg)
     @once_again = true
-    @show_player_action_button = true
+    @show_player_action_button = false
     @error = "<strong>You lose!</strong> #{msg}"
   end
 
   def tie!(msg)
     @once_again = true
-    @show_player_action_button = true
+    @show_player_action_button = false
     @success = "<strong>It's a tie!</strong> #{msg}"
   end
 end

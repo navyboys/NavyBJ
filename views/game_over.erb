@@ -1,3 +1,7 @@
 <h3>Thanks for playing!</h3>
 
+<% if session[:player_pot] == 0 %>
+  <p>You have no enough money to continue the game.</p>
+<% end %>
+
 <a href='/new_player'>Start over</a>

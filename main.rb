@@ -1,5 +1,6 @@
 require 'rubygems'
 require 'sinatra'
+require 'pry'
 
 set :sessions, true
 
@@ -52,12 +53,14 @@ helpers do
   def win!(msg)
     @once_again = true
     @show_player_action_button = false
+    session[:player_pot] = session[:player_pot] + session[:player_bet]
     @success = "<strong>You win!</strong> #{msg}"
   end
 
   def lose!(msg)
     @once_again = true
     @show_player_action_button = false
+    session[:player_pot] = session[:player_pot] - session[:player_bet]
     @error = "<strong>You lose!</strong> #{msg}"
   end
 
@@ -80,8 +83,9 @@ get '/' do
     redirect 'new_player'
   end
 end
- 
+
 get '/new_player' do
+  session[:player_pot] = 500
   erb :new_player
 end
 
@@ -92,7 +96,29 @@ post '/new_player' do
   end
 
   session[:player_name] = params[:player_name]
-  redirect '/game'
+  redirect '/bet'
+end
+
+get '/bet' do
+  if session[:player_pot] == 0
+    redirect 'game_over'
+  end
+
+  session[:player_bet] = nil
+  erb :bet 
+end
+
+post '/bet' do
+  if params[:bet_amount].nil? || params[:bet_amount].to_i == 0
+    @error = "Please make a bet."
+    halt erb(:bet)
+  elsif params[:bet_amount].to_i > session[:player_pot]
+    @error = "Sorry, you have no enough money. Make a bet under $#{session[:player_pot]}."
+    halt erb(:bet)
+  else
+    session[:player_bet] = params[:bet_amount].to_i
+    redirect '/game'
+  end
 end
 
 get '/game' do
@@ -124,7 +150,7 @@ post '/game/player/hit' do
     win!("You hit blackjack.")
   end
 
-  erb :game
+  erb :game, layout: false
 end
 
 post '/game/player/stay' do
@@ -149,7 +175,7 @@ get '/game/dealer' do
     @show_dealer_action_button = true
   end
     
-  erb :game      
+  erb :game, layout: false
 end
 
 post '/game/dealer/hit' do
@@ -172,7 +198,7 @@ get '/game/compare' do
     tie!("Both you and the dealer stayed at #{player_total}.") 
   end
 
-  erb :game
+  erb :game, layout: false
 end
 
 get '/game_over' do

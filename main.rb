@@ -14,7 +14,7 @@ helpers do
 
     # calculate
     total = 0
-    values.each { |e| total += numerate(e) } 
+    values.each { |e| total += numerate(e) }
 
     # correct for 'A'
     values.select{|e| e == 'A'}.count.times do
@@ -41,9 +41,9 @@ helpers do
     if ['J', 'Q', 'K', 'A'].include?(value)
       value = case card[1]
         when 'J' then 'jack'
-        when 'Q' then 'queen'  
+        when 'Q' then 'queen'
         when 'K' then 'king'
-        when 'A' then 'ace' 
+        when 'A' then 'ace'
       end
     end
 
@@ -105,7 +105,7 @@ get '/bet' do
   end
 
   session[:player_bet] = nil
-  erb :bet 
+  erb :bet
 end
 
 post '/bet' do
@@ -123,7 +123,7 @@ end
 
 get '/game' do
   # create deck
-  suits = ['Hearts', 'Diamonds', 'Clubs', 'Spades'] 
+  suits = ['Hearts', 'Diamonds', 'Clubs', 'Spades']
   values = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A']
   session[:deck] = suits.product(values).shuffle!
 
@@ -168,13 +168,13 @@ get '/game/dealer' do
   if dealer_total > BLACKJACK_AMOUNT
     win!("Dealer busted at #{dealer_total}.")
   elsif dealer_total == BLACKJACK_AMOUNT
-    lose!("Dealer hit blackjack.") 
+    lose!("Dealer hit blackjack.")
   elsif dealer_total >= DEALER_MIN_HIT
     redirect '/game/compare'
   else
     @show_dealer_action_button = true
   end
-    
+
   erb :game, layout: false
 end
 
@@ -191,11 +191,11 @@ get '/game/compare' do
 
   # decision tree
   if player_total > dealer_total
-    win!("You stayed at #{player_total} and the dealer stayed at #{dealer_total}.") 
+    win!("You stayed at #{player_total} and the dealer stayed at #{dealer_total}.")
   elsif player_total < dealer_total
-    lose!("You stayed at #{player_total} and the dealer stayed at #{dealer_total}.") 
+    lose!("You stayed at #{player_total} and the dealer stayed at #{dealer_total}.")
   else
-    tie!("Both you and the dealer stayed at #{player_total}.") 
+    tie!("Both you and the dealer stayed at #{player_total}.")
   end
 
   erb :game, layout: false
